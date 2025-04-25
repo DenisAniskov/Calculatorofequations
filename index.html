@@ -3,10 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Калькулятор неравенств</title>
-    <link rel="stylesheet" href="/src/styles.output.css">
+    <meta name="description" content="Математический калькулятор с искусственным интеллектом для решения неравенств, уравнений с параметрами и вычислений" />
+    <meta name="keywords" content="калькулятор, математика, неравенства, уравнения, параметр, нейронная сеть, ии, решение" />
+    <meta name="author" content="Денис Анисков" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="color-scheme" content="light dark" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://math-calculator-ai.netlify.app/" />
+    <meta property="og:title" content="Математический калькулятор с ИИ" />
+    <meta property="og:description" content="Решение неравенств, уравнений с параметрами и сложных вычислений с помощью искусственного интеллекта" />
+    <meta property="og:image" content="/meta-image.jpg" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://math-calculator-ai.netlify.app/" />
+    <meta property="twitter:title" content="Математический калькулятор с ИИ" />
+    <meta property="twitter:description" content="Решение неравенств, уравнений с параметрами и сложных вычислений с помощью искусственного интеллекта" />
+    <meta property="twitter:image" content="/meta-image.jpg" />
+    
+    <!-- Preload важных ресурсов -->
+    <link rel="preload" href="/src/styles.output.css" as="style" />
+    <link rel="preload" href="/src/index.jsx" as="script" crossorigin="anonymous" />
+    
+    <!-- Иконки -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- PWA поддержка -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <title>Математический калькулятор с ИИ</title>
+    <link rel="stylesheet" href="/src/styles.output.css" />
+    
+    <!-- Предзагрузка шрифтов для оптимальной производительности -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Скрипт обнаружения предпочтений темы -->
+    <script>
+      // Проверяем предпочтения темы
+      if (
+        localStorage.getItem('darkMode') === 'true' || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches && 
+        !localStorage.getItem('darkMode'))
+      ) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 20px; text-align: center;">
+        <h1>Для работы приложения необходим JavaScript</h1>
+        <p>Пожалуйста, включите JavaScript в настройках вашего браузера, чтобы продолжить.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.jsx"></script>
   </body>

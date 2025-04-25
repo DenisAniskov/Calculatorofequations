@@ -1,0 +1,49 @@
+{
+  "name": "Математический калькулятор с ИИ",
+  "short_name": "МатКалк ИИ",
+  "description": "Математический калькулятор с искусственным интеллектом для решения неравенств, уравнений с параметрами и вычислений",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "utilities", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Калькулятор неравенств",
+      "url": "/?tab=inequality",
+      "description": "Открыть калькулятор неравенств"
+    },
+    {
+      "name": "Уравнения с параметром",
+      "url": "/?tab=parameter",
+      "description": "Открыть калькулятор уравнений с параметром"
+    }
+  ]
+} 

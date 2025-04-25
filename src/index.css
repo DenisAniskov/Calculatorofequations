@@ -263,4 +263,154 @@ code {
 .solution-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Дополнительные стили для мобильной адаптивности */
+@media (max-width: 640px) {
+  /* Уменьшаем размер шрифта для заголовков на маленьких экранах */
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  h2 {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Адаптируем размер кнопок */
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Адаптируем отступы */
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  .mt-6 {
+    margin-top: 1rem !important;
+  }
+  
+  /* Адаптируем высоту графиков */
+  .h-72 {
+    height: 240px !important;
+  }
+}
+
+/* Улучшение внешнего вида для кнопок операторов */
+.operator-button {
+  transition: all 0.2s ease;
+}
+
+.operator-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Анимация для появления компонентов */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Доступность: фокус для интерактивных элементов */
+button:focus, 
+input:focus, 
+select:focus, 
+textarea:focus {
+  outline: 2px solid #4299e1 !important;
+  outline-offset: 2px;
+}
+
+/* Темная тема */
+.dark body {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+/* Улучшение читаемости в темном режиме */
+.dark p, 
+.dark li, 
+.dark span {
+  color: #e5e7eb;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+/* Поддержка режима высокой контрастности */
+@media (prefers-contrast: high) {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  a, button {
+    border: 1px solid currentColor !important;
+  }
+  
+  input, textarea, select {
+    border: 2px solid #000000 !important;
+  }
+}
+
+/* Поддержка предпочтений уменьшения движения */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Улучшение для touch-устройств */
+@media (pointer: coarse) {
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important; /* Предотвращает зум на iOS при фокусе */
+  }
+}
+
+/* Исправления для печати */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  a {
+    text-decoration: underline;
+    color: blue;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
 } 

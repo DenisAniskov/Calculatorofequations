@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { validateInequality, solveQuadraticInequality, solveLinearInequality, solveRationalInequality, parseInequality } from '../utils/mathUtils';
+import { validateInequality, solveQuadraticInequality, solveLinearInequality, solveRationalInequality, parseInequality, generateStepByStepSolutionForInequality } from '../utils/mathUtils';
 import ThemeToggle from './ThemeToggle';
 import InequalityGraph from './InequalityGraph';
 import Button from './Button';
@@ -59,6 +59,11 @@ const InequalityCalculator = ({ darkMode }) => {
   const [p, setP] = useState(1);
   const [q, setQ] = useState(1);
   const [r, setR] = useState(1);
+  const [detailedSteps, setDetailedSteps] = useState([]);
+  const [isShowingDetailedSteps, setIsShowingDetailedSteps] = useState(false);
+  const [isShowingGraph, setIsShowingGraph] = useState(false);
+  const [inequalityParams, setInequalityParams] = useState(null);
+  const [errorType, setErrorType] = useState(null);
 
   const handleInequalityChange = (e) => {
     const value = e.target.value;
@@ -83,35 +88,96 @@ const InequalityCalculator = ({ darkMode }) => {
       .replace(/ln/g, '\\ln');
   };
 
+  const getErrorMessage = (error) => {
+    const errorMsg = error.message || 'Произошла неизвестная ошибка';
+    let type = 'general';
+    let hint = '';
+    
+    if (errorMsg.includes('скобок')) {
+      type = 'brackets';
+      hint = 'Проверьте, что все открывающие скобки имеют соответствующие закрывающие скобки.';
+    } else if (errorMsg.includes('недопустимые символы')) {
+      type = 'chars';
+      hint = 'Используйте только цифры, переменную x, операторы +, -, *, /, ^, скобки и символы сравнения >, <, =, ≠, ≥, ≤.';
+    } else if (errorMsg.includes('оператор сравнения')) {
+      type = 'operator';
+      hint = 'Неравенство должно содержать один из следующих операторов: >, <, >=, <=, =, ≠.';
+    } else if (errorMsg.includes('деление на нуль')) {
+      type = 'division';
+      hint = 'Выражение содержит деление на нуль, что недопустимо. Проверьте знаменатель вашего выражения.';
+    } else if (errorMsg.includes('синтаксис')) {
+      type = 'syntax';
+      hint = 'Проверьте синтаксис выражения. Возможно, пропущен оператор или число.';
+    }
+    
+    setErrorType(type);
+    return (
+      <div>
+        <p className="text-red-500 font-medium">{errorMsg}</p>
+        {hint && <p className="text-sm mt-1 text-gray-500 dark:text-gray-400">{hint}</p>}
+      </div>
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setErrorType(null);
     setSolution([]);
+    setDetailedSteps([]);
+    setIsShowingDetailedSteps(false);
+    setIsShowingGraph(false);
 
     try {
-      // Валидация входных данных
+      if (!inequality.trim()) {
+        setError('Пожалуйста, введите неравенство');
+        setErrorType('empty');
+        return;
+      }
+
       validateInequality(inequality);
 
-      // Парсим неравенство для определения его типа и параметров
       const params = parseInequality(inequality);
+      setInequalityParams(params);
       
       let result;
       switch (params.type) {
         case 'quadratic':
           result = solveQuadraticInequality(params);
+          setDetailedSteps(generateStepByStepSolutionForInequality('quadratic', params));
           break;
         case 'linear':
           result = solveLinearInequality(params);
+          setDetailedSteps(generateStepByStepSolutionForInequality('linear', params));
           break;
         case 'rational':
           result = solveRationalInequality(inequality);
+          setDetailedSteps(generateStepByStepSolutionForInequality('rational', params));
           break;
         default:
           throw new Error('Неподдерживаемый тип неравенства');
       }
 
+      if (result) {
+        const historyItem = {
+          inequality,
+          solution: result,
+          timestamp: new Date().toISOString(),
+          type: params.type
+        };
+        setHistory([historyItem, ...history].slice(0, 10));
+        
+        try {
+          localStorage.setItem('inequalityHistory', JSON.stringify([historyItem, ...history].slice(0, 10)));
+        } catch (storageError) {
+          console.warn('Не удалось сохранить историю в localStorage:', storageError);
+        }
+      }
+
       setSolution(result);
+      setIsShowingGraph(true);
     } catch (error) {
+      console.error('Ошибка при решении неравенства:', error);
       setError(error.message);
     }
   };
@@ -427,6 +493,16 @@ const InequalityCalculator = ({ darkMode }) => {
     return 'Решение не может быть отформатировано';
   };
 
+  // Добавляем компонент для отображения детального решения
+  const toggleDetailedSteps = () => {
+    setIsShowingDetailedSteps(!isShowingDetailedSteps);
+  };
+
+  // Функция для отображения/скрытия графика
+  const toggleGraph = () => {
+    setIsShowingGraph(!isShowingGraph);
+  };
+
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-200 ${darkMode ? 'dark' : ''}`}>
       <ThemeToggle />
@@ -669,31 +745,50 @@ const InequalityCalculator = ({ darkMode }) => {
                     <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Решение:</h2>
                     <div className="flex space-x-3">
                       <button
+                        onClick={toggleDetailedSteps}
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200"
+                      >
+                        {isShowingDetailedSteps ? 'Скрыть подробное решение' : 'Показать подробное решение'}
+                      </button>
+                      <button
+                        onClick={toggleGraph}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200"
+                      >
+                        {isShowingGraph ? 'Скрыть график' : 'Показать график'}
+                      </button>
+                      <button
                         onClick={copyToClipboard}
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
                       >
                         {copySuccess ? 'Скопировано!' : 'Копировать'}
                       </button>
-                      <button
-                        onClick={() => setShowSteps(!showSteps)}
-                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200"
-                      >
-                        {showSteps ? 'Скрыть шаги' : 'Показать шаги'}
-                      </button>
                     </div>
                   </div>
                   <div className="space-y-4 text-gray-700 dark:text-gray-200">
-                    {showSteps && (
-                      <pre className="whitespace-pre-wrap font-mono text-lg bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                        {formatSolution(solution)}
-                      </pre>
+                    {isShowingDetailedSteps && detailedSteps && detailedSteps.length > 0 && (
+                      <div className="pl-4 border-l-2 border-blue-500">
+                        <MathJaxContext>
+                          {detailedSteps.map((step, index) => (
+                            <div key={index} className="my-2">
+                              <MathJax className="text-md">
+                                {step}
+                              </MathJax>
+                            </div>
+                          ))}
+                        </MathJaxContext>
+                      </div>
                     )}
                   </div>
                 </div>
                 
-                {showGraph && graphData && (
+                {isShowingGraph && inequalityParams && (
                   <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg transform hover:scale-[1.01] transition-all duration-300">
-                    <Line data={graphData.data} options={graphData.options} />
+                    <InequalityGraph 
+                      type={inequalityParams.type}
+                      params={inequalityParams}
+                      solution={solution}
+                      darkMode={darkMode}
+                    />
                   </div>
                 )}
 
