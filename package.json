@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "postinstall": "npm run build",
     "predeploy": "node deploy-to-netlify.js",
-    "deploy": "npm run build && npm run predeploy"
+    "deploy": "npm run build && npm run predeploy",
+    "netlify": "node deploy.js",
+    "netlify:deploy": "npx netlify deploy --prod"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^4.17.0",
