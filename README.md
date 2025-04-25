@@ -25,8 +25,8 @@
 
 ```bash
 # Клонирование репозитория
-git clone https://github.com/YOUR_USERNAME/inequality-calculator.git
-cd inequality-calculator
+git clone https://github.com/DenisAniskov/Calculatorofequations.git
+cd Calculatorofequations
 
 # Установка зависимостей
 npm install
